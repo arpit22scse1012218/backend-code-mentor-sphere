@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Sphere</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+        integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f4f9;
+        }
+
+        /* Chat container */
+        .chat-container {
+            background-color: #fff;
+            border-radius: 15px;
+            width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            overflow: hidden;
+            display: none; /* Initially hidden */
+        }
+
+        /* Toggle button */
+        .toggle-chatbot-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        /* Chat header */
+        .chat-header {
+            background-color: #0078D4;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            position: relative;
+        }
+
+        .chat-header .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Chatbox area */
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        #chatbox p {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 80%;
+        }
+
+        /* Styling user and bot messages */
+        .bot-message {
+            background-color: #e5e5ea;
+            color: #000;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background-color: #0078D4;
+            color: white;
+            align-self: flex-end;
+        }
+
+        /* Message input area */
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: #f1f1f1;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-area button {
+            margin-left: 10px;
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-area button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Smooth scrolling for the chatbox */
+        #chatbox {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column vh-100">
+    <%- include('../partials/navbar') %>
+    <main class="container mt-5">
+        <%- include('../partials/flash') %>
+        <%- body %>
+
+        <!-- Chatbot Toggle Button -->
+        <button class="toggle-chatbot-btn" id="toggleChatbotBtn" onclick="toggleChatbot()">Chat with MentorBot</button>
+
+        <!-- Chatbot HTML -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Chat header -->
+            <div class="chat-header">
+                MentorBot
+                <!-- Close button -->
+                <button class="close-btn" id="closeChatbotBtn" onclick="toggleChatbot()">×</button>
+            </div>
+
+            <!-- Chatbox -->
+            <div id="chatbox"></div>
+
+            <!-- Input area -->
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+        integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+        crossorigin="anonymous"></script>
+
+    <script src="/javascripts/validateForms.js"></script>
+    <script>
+        // Get chatbox element
+        const chatbox = document.getElementById('chatbox');
+        const chatContainer = document.getElementById('chatContainer');
+
+        // Display the bot's message in the chatbox
+        function displayBotMessage(message) {
+            chatbox.innerHTML += `<p class="bot-message"><strong>MentorBot:</strong> ${message}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Display user's message in the chatbox
+        function displayUserMessage(message) {
+            chatbox.innerHTML += `<p class="user-message"><strong>You:</strong> ${message}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Get bot response based on user message
+        function getBotResponse(userMessage) {
+            const responses = {
+                'hello': 'Hello! How can I assist you today?',
+                'mentor': 'I can help you find a mentor or book a session. What do you need help with?',
+                'schedule': 'You can view available mentors and their schedules on the mentor page.',
+                'become mentor': 'If you want to become a mentor, you can apply on our registration page.',
+                'reviews': 'You can leave a review for a mentor on their profile page.',
+                'video call': 'You can schedule a video call with a mentor through Google Calendar. Check the mentor’s availability and book a session.',
+                'university': 'We provide mentorship for various universities. Are you looking for guidance related to university admissions, exams, or mentorship?',
+                'aicte': 'The AICTE (All India Council for Technical Education) provides accreditation to technical institutions in India. How can I assist you with AICTE information?',
+                'galgotias': 'Galgotias University is a renowned institution. Do you need mentorship, admission details, or guidance related to Galgotias?',
+                'galgotias university': 'Galgotias University offers a wide range of programs. How can I help you with Galgotias University-related queries?',
+                'AICTE': 'AICTE is a national-level council for technical education in India. Do you need details about AICTE accreditation or policies?',
+            };
+
+            for (let key in responses) {
+                if (userMessage.toLowerCase().includes(key)) {
+                    return responses[key];
+                }
+            }
+            return 'Sorry, I didn’t understand that. Could you try asking something else?';
+        }
+
+        // Send a message when the user clicks the send button
+        function sendMessage() {
+            const userMessage = document.getElementById('messageInput').value;
+
+            // Display the user's message
+            displayUserMessage(userMessage);
+
+            // Get the bot's response
+            const botResponse = getBotResponse(userMessage);
+
+            // Display the bot's response
+            displayBotMessage(botResponse);
+
+            // Clear the input field
+            document.getElementById('messageInput').value = '';
+        }
+
+        // Toggle chatbot visibility
+        function toggleChatbot() {
+            const chatContainer = document.getElementById('chatContainer');
+            const toggleBtn = document.getElementById('toggleChatbotBtn');
+
+            if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+                chatContainer.style.display = 'flex'; // Open the chatbot
+                toggleBtn.innerText = 'Close MentorBot';
+            } else {
+                chatContainer.style.display = 'none'; // Close the chatbot
+                toggleBtn.innerText = 'Chat with MentorBot';
+            }
+        }
+    </script>
+</body>
+
+</html>

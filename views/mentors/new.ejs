@@ -1,0 +1,47 @@
+<% layout('layouts/boilerplate')%>
+<div class="row">
+    <h1 class="text-center">Add New Mentor</h1>
+    <div class="col-6 offset-3">
+        <form action="/mentors" method="POST" novalidate class="validated-form">
+            <div class="mb-3">
+                <label class="form-label" for="mentor_name">Mentor Name</label>
+                <input class="form-control" type="text" id="mentor_name" name="mentor[mentor_name]" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="field">Field</label>
+                <input class="form-control" type="text" id="field" name="mentor[field]" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-control" type="email" id="email" name="mentor[email]" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Image URL</label>
+                <input class="form-control" type="text" id="image" name="mentor[image]" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Mentor Description</label>
+                <textarea class="form-control" id="description" name="mentor[description]" required></textarea>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success">Add Mentor</button>
+            </div>
+        </form>
+        <a href="/mentors">All Mentors</a>
+    </div>
+</div>
