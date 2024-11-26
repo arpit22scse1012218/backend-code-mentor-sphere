@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const Mentor = require('../models/mentor_sch'); // Adjust the path if needed
 
 mongoose.connect('mongodb://localhost:27017/mentor-connect', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    
 });
 
 const db = mongoose.connection;
